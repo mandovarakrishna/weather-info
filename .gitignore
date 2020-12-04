@@ -1,0 +1,46 @@
+# Directories #
+build/
+bin/
+target/
+/classes/
+/test-classes/
+
+# Deployment #
+manifest.yml
+
+# OS Files #
+.DS_Store
+.svn/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.db
+
+# Config #
+Desktop.ini
+
+# Thumbnails #
+._*
+
+# Eclipse #
+*.project
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.project
+.settings/
+.loadpath
+.buildpath
+.factorypath
+
+
+# Spring #
+.springBeans
