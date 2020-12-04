@@ -11,10 +11,10 @@ public class WeatherService {
 	@Inject
 	OpenWeatherMapService openWeatherMapService;
 	
-	public OpenWeatherMap getWeatherInformation(String city, String zipCode) {
+	public OpenWeatherMap getWeatherInformation(String city, String zipCode, String appKey) {
 		
 		//Call OpenWeatherMap API 
-		OpenWeatherMap openWeatherMap =openWeatherMapService.getOpenWeatherMap(city, zipCode);
+		OpenWeatherMap openWeatherMap =openWeatherMapService.getOpenWeatherMap(city, zipCode, appKey);
 		
 		return openWeatherMap;
 	}

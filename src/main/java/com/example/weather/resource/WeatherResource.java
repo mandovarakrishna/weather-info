@@ -1,7 +1,9 @@
 package com.example.weather.resource;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -22,9 +24,10 @@ public class WeatherResource {
 	@GET
 	@Path("weather-info")
 	public Response getWeatherInfo(@QueryParam("city") String city, 
-			@QueryParam("zipCode") String zipCode) {
+			@QueryParam("zipCode") String zipCode,
+			@HeaderParam("appid") @NotNull String appKey) {
 		
-		OpenWeatherMap openWeatherMap  = weatherService.getWeatherInformation(city, zipCode);
+		OpenWeatherMap openWeatherMap  = weatherService.getWeatherInformation(city, zipCode, appKey);
 		
 		if(openWeatherMap != null) {
 			return Response.status(Status.OK).entity(openWeatherMap).build();

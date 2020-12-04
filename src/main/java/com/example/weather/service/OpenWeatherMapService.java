@@ -5,6 +5,8 @@ import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import com.example.weather.openweathermap.model.OpenWeatherMap;
 import com.example.weather.rest.RestClient;
 
@@ -14,12 +16,17 @@ public class OpenWeatherMapService {
 	@Inject
 	RestClient restClient;
 	
-	public OpenWeatherMap getOpenWeatherMap(String city, String zipCode) {
+	@Value("${OPEN_WEATHER_MAP}")
+	String openWeatheMapUrl;
+	
+	public OpenWeatherMap getOpenWeatherMap(String city, String zipCode, String appKey) {
 		OpenWeatherMap openWeatherMap = null;
-		Response response = restClient.getCall("https://api.openweathermap.org/data/2.5/weather?q=London&APPID=6c7da970e8c0052dfc8d7bc4385cf4a9");
+		Response response = restClient.getCall(openWeatheMapUrl, city, zipCode, appKey);
 		
 		if(Status.OK.getStatusCode() == response.getStatus()) {
 			openWeatherMap = response.readEntity(OpenWeatherMap.class);
+		} else {
+			
 		}
 		
 		return openWeatherMap;
