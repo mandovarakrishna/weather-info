@@ -15,38 +15,37 @@ import javax.ws.rs.core.Response.StatusType;
 import org.springframework.util.CollectionUtils;
 
 import com.example.weather.error.ErrorService;
-import com.example.weather.model.OpenWeatherMap;
+import com.example.weather.model.CurrentWeatherInfo;
 import com.example.weather.service.WeatherService;
 
 @Path("/")
-@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class WeatherResource {
-	
+
 	@Inject
 	WeatherService weatherService;
-	
+
 	@Inject
 	ErrorService errorService;
-	
+
 	@GET
 	@Path("current-weather")
-	public Response getWeatherInfo(@QueryParam("city") String city, 
-			@QueryParam("zipCode") String zipCode,
-			@HeaderParam("appid") @NotNull String appKey) {
-		
+	public Response getWeatherInfo(@QueryParam("city") String city, @QueryParam("zipCode") String zipCode,
+			@HeaderParam("appid") @NotNull String appKey, @HeaderParam("key") @NotNull String key) {
+
 		errorService.intializeErrors();
-		
-		OpenWeatherMap openWeatherMap  = weatherService.getWeatherInformation(city, zipCode, appKey);
-		
-		if(CollectionUtils.isEmpty(errorService.getErrors())) {
-			return Response.status(Status.OK).entity(openWeatherMap).build();
+
+		CurrentWeatherInfo currentWeatherInfo = weatherService.getCurrentWeatherInformation(city, zipCode, appKey, key);
+
+		if (CollectionUtils.isEmpty(errorService.getErrors())) {
+			return Response.status(Status.OK).entity(currentWeatherInfo).build();
 		}
-		
+
 		return errorResponse(Status.BAD_REQUEST);
 	}
-	
+
 	private Response errorResponse(StatusType statusType) {
 		return Response.status(statusType).entity(errorService.getErrors()).build();
 	}
-	
+
 }

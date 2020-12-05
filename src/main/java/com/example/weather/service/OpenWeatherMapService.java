@@ -26,7 +26,8 @@ public class OpenWeatherMapService {
 
 	public OpenWeatherMap getOpenWeatherMap(String city, String zipCode, String appKey) {
 		OpenWeatherMap openWeatherMap = null;
-		Response response = restClient.getCall(openWeatheMapUrl, city, zipCode, appKey);
+
+		Response response = restClient.getCall(addQueryParam(city, zipCode, appKey));
 
 		if (response != null && Status.OK.getStatusCode() == response.getStatus()) {
 			openWeatherMap = response.readEntity(OpenWeatherMap.class);
@@ -35,6 +36,19 @@ public class OpenWeatherMapService {
 		}
 
 		return openWeatherMap;
+	}
+
+	protected String addQueryParam(String city, String zipCode, String appKey) {
+
+		StringBuilder builder = new StringBuilder(openWeatheMapUrl);
+		if (city != null) {
+			builder.append("?q=" + city);
+		} else if (zipCode != null) {
+			builder.append("?zip=" + zipCode);
+		}
+		builder.append("&appid=" + appKey);
+
+		return builder.toString();
 	}
 
 	protected void parseErrorResponse(Response response) {

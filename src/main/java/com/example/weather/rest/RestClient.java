@@ -9,18 +9,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.ClientProperties;
-import org.springframework.beans.factory.annotation.Value;
 
 @Named
 public class RestClient {
 
-	public Response getCall(String url, String city, String zipCode, String appKey) {
+	public Response getCall(String url) {
 
 		Response response = null;
 
 		try {
 
-			Builder builder = getBuilder(url, city, zipCode, appKey);
+			Builder builder = getBuilder(url);
 
 			if (builder != null) {
 				response = builder.get();
@@ -34,16 +33,8 @@ public class RestClient {
 		}
 	}
 
-	protected Builder getBuilder(String url, String city, String zipCode, String appKey) {
+	protected Builder getBuilder(String url) {
 		WebTarget webTarget = ClientBuilder.newClient().target(url);
-
-		if (city != null) {
-			webTarget = webTarget.queryParam("q", city);
-		} else if (zipCode != null) {
-			webTarget = webTarget.queryParam("zip", zipCode);
-		}
-
-		webTarget = webTarget.queryParam("appid", appKey);
 
 		return buildTarget(webTarget);
 	}
