@@ -26,7 +26,7 @@ public class OpenWeatherMapService {
 
 	public OpenWeatherMap getOpenWeatherMap(String city, String zipCode, String appKey) {
 		OpenWeatherMap openWeatherMap = null;
-
+		
 		Response response = restClient.getCall(addQueryParam(city, zipCode, appKey));
 
 		if (response != null && Status.OK.getStatusCode() == response.getStatus()) {

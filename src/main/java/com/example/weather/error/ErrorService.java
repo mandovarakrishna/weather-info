@@ -1,28 +1,30 @@
 package com.example.weather.error;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-@Singleton
+//@Singleton
 @Named
 public class ErrorService {
-	
-	private static final ThreadLocal<List<WeatherError>> threadLocal = new InheritableThreadLocal<>(); 
-	
+
+	List<WeatherError> errors = new CopyOnWriteArrayList<>();
+
 	public void intializeErrors() {
-		List<WeatherError> errors = new CopyOnWriteArrayList<>();
-		threadLocal.set(errors);
+		if(!errors.isEmpty()) {
+			errors.clear();
+		}
 	}
-	
+
 	public void addError(String message, String type) {
-		List<WeatherError> errors = threadLocal.get();
+
 		errors.add(new WeatherError(message, type));
 	}
-	
+
 	public List<WeatherError> getErrors() {
-		return threadLocal.get();
+		return errors;
 	}
 }

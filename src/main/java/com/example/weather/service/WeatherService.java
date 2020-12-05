@@ -1,5 +1,7 @@
 package com.example.weather.service;
 
+import java.util.concurrent.CompletableFuture;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.Response.Status;
@@ -27,16 +29,49 @@ public class WeatherService {
 	public CurrentWeatherInfo getCurrentWeatherInformation(String city, String zipCode, String appKey, String key) {
 
 		CurrentWeatherInfo currentWeatherInfo = null;
+		OpenWeatherMap openWeatherMap = null;
+		WeatherBit weatherBit = null;
 
 		if (validateInputFields(city, zipCode, appKey, key)) {
+
 			/** Call OpenWeatherMap API */
-			OpenWeatherMap openWeatherMap = openWeatherMapService.getOpenWeatherMap(city, zipCode, appKey);
+			CompletableFuture<OpenWeatherMap> openWeatherMapResponse = CompletableFuture.supplyAsync(() -> {
+
+				try {
+					
+					return openWeatherMapService.getOpenWeatherMap(city, zipCode, appKey);
+				} catch (Exception e) {
+					errorService.addError("Exception occured while calling OpenWeatherMap", Status.NOT_FOUND.toString());
+					return null;
+				}
+
+			});
 
 			/** Call WeatherBit API */
-			WeatherBit weatherBit = weatherBitService.getWeatherBit(city, zipCode, key);
 
-			if (CollectionUtils.isEmpty(errorService.getErrors())) {
+			CompletableFuture<WeatherBit> weatherBitResponse = CompletableFuture.supplyAsync(() -> {
+
+				try {
+					
+					return weatherBitService.getWeatherBit(city, zipCode, key);
+				} catch (Exception e) {
+					errorService.addError("Exception occured while calling WeatherBit", Status.NOT_FOUND.toString());
+					return null;
+				}
+
+			});
+			
+			try {
+				openWeatherMap = openWeatherMapResponse.get();
+				weatherBit = weatherBitResponse.get();
+			} catch (Exception e) {
+				errorService.addError("Exception occured while calling WeatherBit", Status.NOT_FOUND.toString());
+			}
+			
+			if (openWeatherMap != null && weatherBit != null && CollectionUtils.isEmpty(errorService.getErrors())) {
 				currentWeatherInfo = averageOfCurrentWeather(openWeatherMap, weatherBit);
+			} else {
+				
 			}
 		}
 
