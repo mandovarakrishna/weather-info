@@ -3,7 +3,7 @@ package com.example.weather.service;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.example.weather.openweathermap.model.OpenWeatherMap;
+import com.example.weather.model.OpenWeatherMap;
 
 @Named
 public class WeatherService {

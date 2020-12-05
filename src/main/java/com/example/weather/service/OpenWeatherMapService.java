@@ -7,29 +7,43 @@ import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import com.example.weather.openweathermap.model.OpenWeatherMap;
+import com.example.weather.error.ErrorService;
+import com.example.weather.error.OpenWeatherErrorResponse;
+import com.example.weather.model.OpenWeatherMap;
 import com.example.weather.rest.RestClient;
 
 @Named
 public class OpenWeatherMapService {
-	
+
 	@Inject
 	RestClient restClient;
-	
+
+	@Inject
+	ErrorService errorService;
+
 	@Value("${OPEN_WEATHER_MAP}")
 	String openWeatheMapUrl;
-	
+
 	public OpenWeatherMap getOpenWeatherMap(String city, String zipCode, String appKey) {
 		OpenWeatherMap openWeatherMap = null;
 		Response response = restClient.getCall(openWeatheMapUrl, city, zipCode, appKey);
-		
-		if(Status.OK.getStatusCode() == response.getStatus()) {
+
+		if (response != null && Status.OK.getStatusCode() == response.getStatus()) {
 			openWeatherMap = response.readEntity(OpenWeatherMap.class);
 		} else {
-			
+			parseErrorResponse(response);
 		}
-		
+
 		return openWeatherMap;
+	}
+
+	protected void parseErrorResponse(Response response) {
+		if (response != null) {
+			OpenWeatherErrorResponse error = response.readEntity(OpenWeatherErrorResponse.class);
+			errorService.addError(error.getMessage(), error.getCod());
+		} else {
+			errorService.addError("Error Occurred while connecting to OPEN_WEATHER_MAP", Status.NOT_FOUND.toString());
+		}
 	}
 
 }
