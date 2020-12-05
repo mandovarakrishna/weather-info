@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WeatherBit {
+public class WeatherBitCurrent {
 
 	@JsonProperty("data")
 	public List<Datum> getData() {

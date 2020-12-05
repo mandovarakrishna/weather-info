@@ -11,8 +11,11 @@ import org.springframework.util.StringUtils;
 
 import com.example.weather.error.ErrorService;
 import com.example.weather.model.CurrentWeatherInfo;
-import com.example.weather.model.OpenWeatherMap;
-import com.example.weather.model.WeatherBit;
+import com.example.weather.model.ForecastWeatherInfo;
+import com.example.weather.model.OpenWeatherMapCurrent;
+import com.example.weather.model.OpenWeatherMapForecast;
+import com.example.weather.model.WeatherBitCurrent;
+import com.example.weather.model.WeatherBitForecast;
 
 @Named
 public class WeatherService {
@@ -24,24 +27,28 @@ public class WeatherService {
 	WeatherBitService weatherBitService;
 
 	@Inject
+	WeatherHelperService weatherHelperService;
+
+	@Inject
 	ErrorService errorService;
 
 	public CurrentWeatherInfo getCurrentWeatherInformation(String city, String zipCode, String appKey, String key) {
 
 		CurrentWeatherInfo currentWeatherInfo = null;
-		OpenWeatherMap openWeatherMap = null;
-		WeatherBit weatherBit = null;
+		OpenWeatherMapCurrent openWeatherMap = null;
+		WeatherBitCurrent weatherBit = null;
 
 		if (validateInputFields(city, zipCode, appKey, key)) {
 
 			/** Call OpenWeatherMap API */
-			CompletableFuture<OpenWeatherMap> openWeatherMapResponse = CompletableFuture.supplyAsync(() -> {
+			CompletableFuture<OpenWeatherMapCurrent> openWeatherMapResponse = CompletableFuture.supplyAsync(() -> {
 
 				try {
-					
-					return openWeatherMapService.getOpenWeatherMap(city, zipCode, appKey);
+
+					return openWeatherMapService.getOpenWeatherMapCurrent(city, zipCode, appKey);
 				} catch (Exception e) {
-					errorService.addError("Exception occured while calling OpenWeatherMap", Status.NOT_FOUND.toString());
+					errorService.addError("Exception occured while calling OpenWeatherMap",
+							Status.NOT_FOUND.toString());
 					return null;
 				}
 
@@ -49,33 +56,81 @@ public class WeatherService {
 
 			/** Call WeatherBit API */
 
-			CompletableFuture<WeatherBit> weatherBitResponse = CompletableFuture.supplyAsync(() -> {
+			CompletableFuture<WeatherBitCurrent> weatherBitResponse = CompletableFuture.supplyAsync(() -> {
 
 				try {
-					
-					return weatherBitService.getWeatherBit(city, zipCode, key);
+
+					return weatherBitService.getWeatherBitCurrent(city, zipCode, key);
 				} catch (Exception e) {
 					errorService.addError("Exception occured while calling WeatherBit", Status.NOT_FOUND.toString());
 					return null;
 				}
 
 			});
-			
+
 			try {
 				openWeatherMap = openWeatherMapResponse.get();
 				weatherBit = weatherBitResponse.get();
 			} catch (Exception e) {
 				errorService.addError("Exception occured while calling WeatherBit", Status.NOT_FOUND.toString());
 			}
-			
+
 			if (openWeatherMap != null && weatherBit != null && CollectionUtils.isEmpty(errorService.getErrors())) {
-				currentWeatherInfo = averageOfCurrentWeather(openWeatherMap, weatherBit);
-			} else {
-				
+				currentWeatherInfo = weatherHelperService.averageOfCurrentWeather(openWeatherMap, weatherBit);
 			}
 		}
 
 		return currentWeatherInfo;
+	}
+
+	public ForecastWeatherInfo getForecastWeatherInformation(String city, String zipCode, String appKey, String key) {
+
+		ForecastWeatherInfo forecastWeatherInfo = null;
+		OpenWeatherMapForecast openWeatherMap = null;
+		WeatherBitForecast weatherBit = null;
+
+		if (validateInputFields(city, zipCode, appKey, key)) {
+
+			/** Call OpenWeatherMap API */
+
+			CompletableFuture<OpenWeatherMapForecast> openWeatherMapResponse = CompletableFuture.supplyAsync(() -> {
+
+				try {
+					return openWeatherMapService.getOpenWeatherMapForecast(city, zipCode, appKey);
+				} catch (Exception e) {
+					errorService.addError("Exception occured while calling OpenWeatherMap",
+							Status.NOT_FOUND.toString());
+					return null;
+				}
+
+			});
+
+			/** Call WeatherBit API */
+
+			CompletableFuture<WeatherBitForecast> weatherBitResponse = CompletableFuture.supplyAsync(() -> {
+
+				try {
+					return weatherBitService.getWeatherBitForecast(city, zipCode, key);
+				} catch (Exception e) {
+					errorService.addError("Exception occured while calling WeatherBit", Status.NOT_FOUND.toString());
+					return null;
+				}
+
+			});
+
+			try {
+				openWeatherMap = openWeatherMapResponse.get();
+				weatherBit = weatherBitResponse.get();
+			} catch (Exception e) {
+				errorService.addError("Exception occured while calling WeatherBit", Status.NOT_FOUND.toString());
+			}
+
+			if (openWeatherMap != null && weatherBit != null && CollectionUtils.isEmpty(errorService.getErrors())) {
+				forecastWeatherInfo = weatherHelperService.averageOfForecastWeather(openWeatherMap, weatherBit);
+			}
+		}
+
+		return forecastWeatherInfo;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -94,30 +149,6 @@ public class WeatherService {
 		}
 
 		return isSuccess;
-	}
-
-	protected CurrentWeatherInfo averageOfCurrentWeather(OpenWeatherMap openWeatherMap, WeatherBit weatherBit) {
-		CurrentWeatherInfo currentWeatherInfo = new CurrentWeatherInfo();
-
-		currentWeatherInfo.setCity(openWeatherMap.getName());
-		currentWeatherInfo.setAvgTemp(calculateAverage(convertToCelsius(openWeatherMap.getMain().getTemp()),
-				weatherBit.getData().get(0).getTemp()));
-		currentWeatherInfo.setAvgApparent(calculateAverage(convertToCelsius(openWeatherMap.getMain().getFeels_like()),
-				weatherBit.getData().get(0).getApp_temp()));
-
-		return currentWeatherInfo;
-	}
-
-	protected double convertToCelsius(double value1) {
-
-		return (value1 - 273.15);
-	}
-
-	protected String calculateAverage(double value1, double value2) {
-
-		double finalValue = (value1 + value2) / 2;
-
-		return String.format("%.2f", finalValue);
 	}
 
 }

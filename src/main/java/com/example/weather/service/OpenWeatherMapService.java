@@ -9,7 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.example.weather.error.ErrorService;
 import com.example.weather.error.OpenWeatherErrorResponse;
-import com.example.weather.model.OpenWeatherMap;
+import com.example.weather.model.OpenWeatherMapCurrent;
+import com.example.weather.model.OpenWeatherMapForecast;
 import com.example.weather.rest.RestClient;
 
 @Named
@@ -21,16 +22,19 @@ public class OpenWeatherMapService {
 	@Inject
 	ErrorService errorService;
 
-	@Value("${OPEN_WEATHER_MAP}")
-	String openWeatheMapUrl;
+	@Value("${OPEN_WEATHER_MAP_CURRENT}")
+	String openWeatherMapCurrentUrl;
 
-	public OpenWeatherMap getOpenWeatherMap(String city, String zipCode, String appKey) {
-		OpenWeatherMap openWeatherMap = null;
-		
-		Response response = restClient.getCall(addQueryParam(city, zipCode, appKey));
+	@Value("${OPEN_WEATHER_MAP_FORECAST}")
+	String openWeatherMapForecastUrl;
+
+	public OpenWeatherMapCurrent getOpenWeatherMapCurrent(String city, String zipCode, String appKey) {
+		OpenWeatherMapCurrent openWeatherMap = null;
+
+		Response response = restClient.getCall(addQueryParam(city, zipCode, appKey, openWeatherMapCurrentUrl));
 
 		if (response != null && Status.OK.getStatusCode() == response.getStatus()) {
-			openWeatherMap = response.readEntity(OpenWeatherMap.class);
+			openWeatherMap = response.readEntity(OpenWeatherMapCurrent.class);
 		} else {
 			parseErrorResponse(response);
 		}
@@ -38,9 +42,23 @@ public class OpenWeatherMapService {
 		return openWeatherMap;
 	}
 
-	protected String addQueryParam(String city, String zipCode, String appKey) {
+	public OpenWeatherMapForecast getOpenWeatherMapForecast(String city, String zipCode, String appKey) {
+		OpenWeatherMapForecast openWeatherMap = null;
 
-		StringBuilder builder = new StringBuilder(openWeatheMapUrl);
+		Response response = restClient.getCall(addQueryParam(city, zipCode, appKey, openWeatherMapForecastUrl));
+
+		if (response != null && Status.OK.getStatusCode() == response.getStatus()) {
+			openWeatherMap = response.readEntity(OpenWeatherMapForecast.class);
+		} else {
+			parseErrorResponse(response);
+		}
+
+		return openWeatherMap;
+	}
+
+	protected String addQueryParam(String city, String zipCode, String appKey, String url) {
+
+		StringBuilder builder = new StringBuilder(url);
 		if (city != null) {
 			builder.append("?q=" + city);
 		} else if (zipCode != null) {

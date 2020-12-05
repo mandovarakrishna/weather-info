@@ -38,4 +38,17 @@ public class Datum {
 	}
 
 	double app_temp;
+	
+	String valid_date;
+
+	@JsonProperty("valid_date")
+	public String getValid_date() {
+		return valid_date;
+	}
+
+	public void setValid_date(String valid_date) {
+		this.valid_date = valid_date;
+	}
+	
+	
 }
