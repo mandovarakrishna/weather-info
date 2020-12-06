@@ -10,16 +10,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ListWeather {
 
-	Main main;
+	OpenWeatherMapData main;
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	LocalDateTime dt_txt;
 
 	@JsonProperty("main")
-	public Main getMain() {
+	public OpenWeatherMapData getMain() {
 		return this.main;
 	}
 
-	public void setMain(Main main) {
+	public void setMain(OpenWeatherMapData main) {
 		this.main = main;
 	}
 

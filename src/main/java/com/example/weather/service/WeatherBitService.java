@@ -1,11 +1,16 @@
 package com.example.weather.service;
 
+import static net.logstash.logback.argument.StructuredArguments.kv;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.CollectionUtils;
 
 import com.example.weather.error.ErrorService;
 import com.example.weather.error.WeatherBitErrorResponse;
@@ -28,6 +33,9 @@ public class WeatherBitService {
 	@Value("${WEATHER_BIT_FORECAST}")
 	String weatherBitForecastUrl;
 
+	private static final Logger logger = LoggerFactory.getLogger(WeatherBitService.class);
+
+	/** GET WeatherBit Current Information */
 	public WeatherBitCurrent getWeatherBitCurrent(String city, String zipCode, String appKey) {
 		WeatherBitCurrent weatherBit = null;
 
@@ -36,12 +44,15 @@ public class WeatherBitService {
 		if (response != null && Status.OK.getStatusCode() == response.getStatus()) {
 			weatherBit = response.readEntity(WeatherBitCurrent.class);
 		} else {
-			parseErrorResponse(response);
+			if (CollectionUtils.isEmpty(errorService.getErrors())) {
+				parseErrorResponse(response);
+			}
 		}
 
 		return weatherBit;
 	}
 
+	/** GET WeatherBit Forecast Information */
 	public WeatherBitForecast getWeatherBitForecast(String city, String zipCode, String appKey) {
 		WeatherBitForecast weatherBit = null;
 		Response
@@ -51,12 +62,15 @@ public class WeatherBitService {
 		if (response != null && Status.OK.getStatusCode() == response.getStatus()) {
 			weatherBit = response.readEntity(WeatherBitForecast.class);
 		} else {
-			parseErrorResponse(response);
+			if (CollectionUtils.isEmpty(errorService.getErrors())) {
+				parseErrorResponse(response);
+			}
 		}
 
 		return weatherBit;
 	}
 
+	/** Add QueryParam to the URL */
 	protected String addQueryParam(String city, String zipCode, String appKey, String url) {
 
 		StringBuilder builder = new StringBuilder(url);
@@ -71,8 +85,12 @@ public class WeatherBitService {
 	}
 
 	protected void parseErrorResponse(Response response) {
+
 		if (response != null && Status.NO_CONTENT.getStatusCode() != response.getStatus()) {
+
 			WeatherBitErrorResponse bitErrorResponse = response.readEntity(WeatherBitErrorResponse.class);
+			logger.error("Error occured at OpenWeatherMap API: ",
+					kv(bitErrorResponse.getError(), "Error Occurred from WEATHER_BIT_API"));
 			errorService.addError(bitErrorResponse.getError(), "Error Occurred from WEATHER_BIT_API");
 		} else {
 			errorService.addError("Error Occurred while connecting to WEATHER_BIT", Status.NOT_FOUND.toString());

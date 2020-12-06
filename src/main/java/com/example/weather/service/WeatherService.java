@@ -1,11 +1,15 @@
 package com.example.weather.service;
 
+import static net.logstash.logback.argument.StructuredArguments.kv;
+
 import java.util.concurrent.CompletableFuture;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.Response.Status;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -32,6 +36,10 @@ public class WeatherService {
 	@Inject
 	ErrorService errorService;
 
+	private static final Logger logger = LoggerFactory.getLogger(WeatherService.class);
+	private static final String VALIDATION_FAILURE = "Validation Failure: ";
+	private static final String ERROR_MESSAGE = "Error Message: ";
+
 	public CurrentWeatherInfo getCurrentWeatherInformation(String city, String zipCode, String appKey, String key) {
 
 		CurrentWeatherInfo currentWeatherInfo = null;
@@ -46,9 +54,13 @@ public class WeatherService {
 				try {
 
 					return openWeatherMapService.getOpenWeatherMapCurrent(city, zipCode, appKey);
-				} catch (Exception e) {
-					errorService.addError("Exception occured while calling OpenWeatherMap",
-							Status.NOT_FOUND.toString());
+				} catch (Exception exception) {
+
+					logger.error("OpenWeatherMap API",
+							kv("Exception occured while calling OpenWeatherMap current information",
+									Status.NOT_FOUND.toString()),
+							kv(ERROR_MESSAGE, exception.getMessage()));
+					errorService.addError("OpenWeatherMap API: " + exception.getMessage(), Status.NOT_FOUND.toString());
 					return null;
 				}
 
@@ -61,8 +73,11 @@ public class WeatherService {
 				try {
 
 					return weatherBitService.getWeatherBitCurrent(city, zipCode, key);
-				} catch (Exception e) {
-					errorService.addError("Exception occured while calling WeatherBit", Status.NOT_FOUND.toString());
+				} catch (Exception exception) {
+
+					logger.error("WeatherBit API", kv("Exception occured while calling WeatherBit current information",
+							Status.NOT_FOUND.toString()), kv(ERROR_MESSAGE, exception.getMessage()));
+					errorService.addError("WeatherBit API: " + exception.getMessage(), Status.NOT_FOUND.toString());
 					return null;
 				}
 
@@ -71,8 +86,12 @@ public class WeatherService {
 			try {
 				openWeatherMap = openWeatherMapResponse.get();
 				weatherBit = weatherBitResponse.get();
-			} catch (Exception e) {
-				errorService.addError("Exception occured while calling WeatherBit", Status.NOT_FOUND.toString());
+			} catch (Exception exception) {
+
+				logger.error("ExceutionException",
+						kv("ExceutionException occured while completing future", Status.NOT_FOUND.toString()),
+						kv(ERROR_MESSAGE, exception.getMessage()));
+				errorService.addError("ExceutionException: " + exception.getMessage(), Status.NOT_FOUND.toString());
 			}
 
 			if (openWeatherMap != null && weatherBit != null && CollectionUtils.isEmpty(errorService.getErrors())) {
@@ -97,9 +116,13 @@ public class WeatherService {
 
 				try {
 					return openWeatherMapService.getOpenWeatherMapForecast(city, zipCode, appKey);
-				} catch (Exception e) {
-					errorService.addError("Exception occured while calling OpenWeatherMap",
-							Status.NOT_FOUND.toString());
+				} catch (Exception exception) {
+
+					logger.error("OpenWeatherMap API",
+							kv("Exception occured while calling OpenWeatherMap forecast information",
+									Status.NOT_FOUND.toString()),
+							kv(ERROR_MESSAGE, exception.getMessage()));
+					errorService.addError("OpenWeatherMap API: " + exception.getMessage(), Status.NOT_FOUND.toString());
 					return null;
 				}
 
@@ -111,8 +134,11 @@ public class WeatherService {
 
 				try {
 					return weatherBitService.getWeatherBitForecast(city, zipCode, key);
-				} catch (Exception e) {
-					errorService.addError("Exception occured while calling WeatherBit", Status.NOT_FOUND.toString());
+				} catch (Exception exception) {
+
+					logger.error("WeatherBit API", kv("Exception occured while calling WeatherBit forecast information",
+							Status.NOT_FOUND.toString()), kv(ERROR_MESSAGE, exception.getMessage()));
+					errorService.addError("WeatherBit API: " + exception.getMessage(), Status.NOT_FOUND.toString());
 					return null;
 				}
 
@@ -121,8 +147,13 @@ public class WeatherService {
 			try {
 				openWeatherMap = openWeatherMapResponse.get();
 				weatherBit = weatherBitResponse.get();
-			} catch (Exception e) {
-				errorService.addError("Exception occured while calling WeatherBit", Status.NOT_FOUND.toString());
+
+			} catch (Exception exception) {
+
+				logger.error("ExceutionException",
+						kv("ExceutionException occured while completing future", Status.NOT_FOUND.toString()),
+						kv(ERROR_MESSAGE, exception.getMessage()));
+				errorService.addError("ExceutionException: " + exception.getMessage(), Status.NOT_FOUND.toString());
 			}
 
 			if (openWeatherMap != null && weatherBit != null && CollectionUtils.isEmpty(errorService.getErrors())) {
@@ -138,12 +169,19 @@ public class WeatherService {
 		boolean isSuccess = true;
 
 		if (StringUtils.isEmpty(city) && StringUtils.isEmpty(zipCode)) {
+
+			logger.info(VALIDATION_FAILURE, kv("City and ZipCode cannot be empty", Status.BAD_REQUEST.toString()));
 			errorService.addError("City and ZipCode cannot be empty", Status.BAD_REQUEST.toString());
 			isSuccess = false;
 		} else if (StringUtils.isEmpty(appKey)) {
+
+			logger.info(VALIDATION_FAILURE,
+					kv("appKey for OpenWeatherMap cannot be empty", Status.BAD_REQUEST.toString()));
 			errorService.addError("appKey for OpenWeatherMap cannot be empty", Status.BAD_REQUEST.toString());
 			isSuccess = false;
 		} else if (StringUtils.isEmpty(key)) {
+
+			logger.info(VALIDATION_FAILURE, kv("appKey for WeatherBit cannot be empty", Status.BAD_REQUEST.toString()));
 			errorService.addError("appKey for WeatherBit cannot be empty", Status.BAD_REQUEST.toString());
 			isSuccess = false;
 		}

@@ -9,14 +9,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class WeatherBitCurrent {
 
 	@JsonProperty("data")
-	public List<Datum> getData() {
+	public List<WeatherBitCurrentData> getData() {
 		return this.data;
 	}
 
-	public void setData(List<Datum> data) {
+	public void setData(List<WeatherBitCurrentData> data) {
 		this.data = data;
 	}
 
-	List<Datum> data;
+	List<WeatherBitCurrentData> data;
 
 }

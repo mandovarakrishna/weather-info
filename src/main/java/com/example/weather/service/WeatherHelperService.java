@@ -20,6 +20,7 @@ import com.example.weather.model.WeatherBitTempForecast;
 @Named
 public class WeatherHelperService {
 
+	/** Averaging the Current Weather Information */
 	public CurrentWeatherInfo averageOfCurrentWeather(OpenWeatherMapCurrent openWeatherMap,
 			WeatherBitCurrent weatherBit) {
 		CurrentWeatherInfo currentWeatherInfo = new CurrentWeatherInfo();
@@ -32,7 +33,8 @@ public class WeatherHelperService {
 
 		return currentWeatherInfo;
 	}
-
+	
+	/** Averaging the Forecast Weather Information */
 	public ForecastWeatherInfo averageOfForecastWeather(OpenWeatherMapForecast openWeatherMap,
 			WeatherBitForecast weatherBit) {
 
@@ -59,7 +61,8 @@ public class WeatherHelperService {
 
 		return forecastWeatherInfo;
 	}
-
+	
+	/** HelperMethod to filter the validDate */
 	protected static boolean isValidDate(LocalDateTime beginDateStr) {
 
 		if (0 == beginDateStr.getHour()) {
@@ -79,11 +82,13 @@ public class WeatherHelperService {
 		return false;
 	}
 
+	/** HelperMethod for conversionToCelsius */
 	protected double convertToCelsius(double value1) {
 
 		return (value1 - 273.15);
 	}
 
+	/** HelperMethod for average calculation */
 	protected String calculateAverage(double value1, double value2) {
 
 		double finalValue = (value1 + value2) / 2;
