@@ -26,6 +26,8 @@ paths:
       description: "Information can obtained by city or zipCode"
       produces:
       - "application/json"
+      consumes:
+      - "application/json"
       parameters:
       - name: "city"
         in: "query"
@@ -38,12 +40,12 @@ paths:
         required: false
         type: "string"
       - name: "openWeatherApiKey"
-        in: "header"
+        in: "query"
         description: "Auth Token for accessing OpenWeatherMap API"
         required: true
         type: "string"
       - name: "weatherBitApiKey"
-        in: "header"
+        in: "query"
         description: "Auth Token for accessing WeatherBit API"
         required: true
         type: "string"
@@ -89,12 +91,12 @@ paths:
         required: false
         type: "string"
       - name: "openWeatherApiKey"
-        in: "header"
+        in: "query"
         description: "Auth Token for accessing OpenWeatherMap API"
         required: true
         type: "string"
       - name: "weatherBitApiKey"
-        in: "header"
+        in: "query"
         description: "Auth Token for accessing WeatherBit API"
         required: true
         type: "string"

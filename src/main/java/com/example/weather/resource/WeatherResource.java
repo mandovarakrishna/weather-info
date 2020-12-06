@@ -4,8 +4,8 @@ import static net.logstash.logback.argument.StructuredArguments.kv;
 
 import javax.inject.Inject;
 import javax.validation.constraints.Pattern;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -17,16 +17,16 @@ import javax.ws.rs.core.Response.StatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.example.weather.error.ErrorService;
 import com.example.weather.model.CurrentWeatherInfo;
 import com.example.weather.model.ForecastWeatherInfo;
 import com.example.weather.service.WeatherService;
 
-@RestController
 @Path("/")
-@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Produces({ MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_JSON })
 public class WeatherResource {
 
 	@Inject
@@ -38,9 +38,10 @@ public class WeatherResource {
 	private static final Logger logger = LoggerFactory.getLogger(WeatherResource.class);
 
 	@GET
+	@CrossOrigin(origins = "http://localhost:8080/api")
 	@Path("current-weather")
 	public Response getCurrentWeatherInfo(@QueryParam("city") String city, @QueryParam("zipCode") String zipCode,
-			@HeaderParam("openWeatherApiKey") String appKey, @HeaderParam("weatherBitApiKey") String key) {
+			@QueryParam("openWeatherApiKey") String appKey, @QueryParam("weatherBitApiKey") String key) {
 
 		logger.info("Begin Request", kv("logIncomingRequest", "current-weather"), kv("city", city),
 				kv("zipCode", zipCode));
@@ -61,8 +62,8 @@ public class WeatherResource {
 	@GET
 	@Path("forecast-weather")
 	public Response getForecastWeatherInfo(@QueryParam("city") @Pattern(regexp = "^[a-zA-Z0-9]*$") String city,
-			@QueryParam("zipCode") String zipCode, @HeaderParam("openWeatherApiKey") String appKey,
-			@HeaderParam("weatherBitApiKey") String key) {
+			@QueryParam("zipCode") String zipCode, @QueryParam("openWeatherApiKey") String appKey,
+			@QueryParam("weatherBitApiKey") String key) {
 
 		logger.info("Begin Request", kv("logIncomingRequest", "forecast-weather"), kv("city", city),
 				kv("zipCode", zipCode));

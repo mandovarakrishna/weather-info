@@ -11,5 +11,6 @@ public class JerseyConfig extends ResourceConfig {
 	public JerseyConfig() {
 
 		register(WeatherResource.class);
+		register(CorsFilter.class);
 	}
 }
