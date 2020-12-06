@@ -1,7 +1,9 @@
 package com.example.weather.resource;
 
 import static net.logstash.logback.argument.StructuredArguments.kv;
+
 import javax.inject.Inject;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -39,7 +41,7 @@ public class WeatherResource {
 
 	@GET
 	@Path("current-weather")
-	public Response getCurrentWeatherInfo(@QueryParam("city") String city, @QueryParam("zipCode") String zipCode,
+	public Response getCurrentWeatherInfo(@QueryParam("city") @Pattern(regexp = "^[a-zA-Z0-9]*$") String city, @QueryParam("zipCode") String zipCode,
 			@HeaderParam("appid") String appKey, @HeaderParam("key") String key) {
 		
 		logger.info("Begin Request", 
@@ -61,7 +63,7 @@ public class WeatherResource {
 
 	@GET
 	@Path("forecast-weather")
-	public Response getForecastWeatherInfo(@QueryParam("city") String city, @QueryParam("zipCode") String zipCode,
+	public Response getForecastWeatherInfo(@QueryParam("city") @Pattern(regexp = "^[a-zA-Z0-9]*$") String city, @QueryParam("zipCode") String zipCode,
 			@HeaderParam("appid") String appKey, @HeaderParam("key") String key) {
 		
 		logger.info("Begin Request", 

@@ -10,12 +10,10 @@ import javax.inject.Named;
 import com.example.weather.model.CurrentWeatherInfo;
 import com.example.weather.model.Forecast;
 import com.example.weather.model.ForecastWeatherInfo;
-import com.example.weather.model.ListWeather;
 import com.example.weather.model.OpenWeatherMapCurrent;
 import com.example.weather.model.OpenWeatherMapForecast;
 import com.example.weather.model.WeatherBitCurrent;
 import com.example.weather.model.WeatherBitForecast;
-import com.example.weather.model.WeatherBitTempForecast;
 
 @Named
 public class WeatherHelperService {
@@ -34,7 +32,7 @@ public class WeatherHelperService {
 
 		return currentWeatherInfo;
 	}
-	
+
 	/** Averaging the Forecast Weather Information */
 	public ForecastWeatherInfo averageOfForecastWeather(OpenWeatherMapForecast openWeatherMap,
 			WeatherBitForecast weatherBit) {
@@ -44,9 +42,9 @@ public class WeatherHelperService {
 
 		List<Forecast> forecasts = new ArrayList<>();
 
-		for (ListWeather listWeather : openWeatherMap.getList()) {
+		openWeatherMap.getList().stream().forEach(listWeather -> {
 			if (isValidDate(listWeather.getDt_txt())) {
-				for (WeatherBitTempForecast tempForecast : weatherBit.getData()) {
+				weatherBit.getData().stream().forEach(tempForecast -> {
 					if (isEqualDates(tempForecast.getValid_date(), listWeather.getDt_txt())) {
 						Forecast forecast = new Forecast();
 						forecast.setWeather(tempForecast.getWeatherBitDescription().getDescription());
@@ -55,15 +53,16 @@ public class WeatherHelperService {
 								tempForecast.getTemp()));
 						forecasts.add(forecast);
 					}
-				}
+				});
 			}
 
-		}
+		});
+
 		forecastWeatherInfo.setData(forecasts);
 
 		return forecastWeatherInfo;
 	}
-	
+
 	/** HelperMethod to filter the validDate */
 	protected static boolean isValidDate(LocalDateTime beginDateStr) {
 
