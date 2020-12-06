@@ -6,6 +6,7 @@ public class Forecast {
 
 	LocalDate date;
 	String avgTemp;
+	String weather;
 
 	public LocalDate getDate() {
 		return date;
@@ -21,5 +22,13 @@ public class Forecast {
 
 	public void setAvgTemp(String avgTemp) {
 		this.avgTemp = avgTemp;
+	}
+
+	public String getWeather() {
+		return weather;
+	}
+
+	public void setWeather(String weather) {
+		this.weather = weather;
 	}
 }

@@ -10,6 +10,7 @@ public class WeatherBitTempForecast {
 	
 	double temp;
 	LocalDate valid_date;
+	WeatherBitDescription weatherBitDescription;
 
 	@JsonProperty("valid_date")
 	public LocalDate getValid_date() {
@@ -27,5 +28,14 @@ public class WeatherBitTempForecast {
 
 	public void setTemp(double temp) {
 		this.temp = temp;
+	}
+
+	@JsonProperty("weather")
+	public WeatherBitDescription getWeatherBitDescription() {
+		return weatherBitDescription;
+	}
+
+	public void setWeatherBitDescription(WeatherBitDescription weatherBitDescription) {
+		this.weatherBitDescription = weatherBitDescription;
 	}
 }

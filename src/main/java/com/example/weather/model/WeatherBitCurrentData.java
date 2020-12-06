@@ -6,10 +6,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherBitCurrentData {
 
+	WeatherBitDescription weather;
 	String city_name;
 	double temp;
 	double app_temp;
 	String valid_date;
+
+	@JsonProperty("weather")
+	public WeatherBitDescription getWeather() {
+		return this.weather;
+	}
+
+	public void setWeather(WeatherBitDescription weather) {
+		this.weather = weather;
+	}
 
 	@JsonProperty("city_name")
 	public String getCity_name() {

@@ -5,6 +5,7 @@ public class CurrentWeatherInfo {
 	String avgTemp;
 	String avgApparent;
 	String city;
+	String weather;
 
 	public String getAvgTemp() {
 		return avgTemp;
@@ -28,6 +29,14 @@ public class CurrentWeatherInfo {
 
 	public void setCity(String city) {
 		this.city = city;
+	}
+
+	public String getWeather() {
+		return weather;
+	}
+
+	public void setWeather(String weather) {
+		this.weather = weather;
 	}
 
 }

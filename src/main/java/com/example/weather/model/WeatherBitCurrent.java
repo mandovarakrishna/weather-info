@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherBitCurrent {
 
+	List<WeatherBitCurrentData> data;
+
 	@JsonProperty("data")
 	public List<WeatherBitCurrentData> getData() {
 		return this.data;
@@ -16,7 +18,4 @@ public class WeatherBitCurrent {
 	public void setData(List<WeatherBitCurrentData> data) {
 		this.data = data;
 	}
-
-	List<WeatherBitCurrentData> data;
-
 }

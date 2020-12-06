@@ -8,6 +8,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OpenWeatherMapForecast {
 
+	List<ListWeather> list;
+	City city;
+
 	@JsonProperty("list")
 	public List<ListWeather> getList() {
 		return this.list;
@@ -16,8 +19,6 @@ public class OpenWeatherMapForecast {
 	public void setList(List<ListWeather> list) {
 		this.list = list;
 	}
-
-	List<ListWeather> list;
 
 	@JsonProperty("city")
 	public City getCity() {
@@ -28,5 +29,4 @@ public class OpenWeatherMapForecast {
 		this.city = city;
 	}
 
-	City city;
 }

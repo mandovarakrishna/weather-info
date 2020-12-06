@@ -26,6 +26,7 @@ public class WeatherHelperService {
 		CurrentWeatherInfo currentWeatherInfo = new CurrentWeatherInfo();
 
 		currentWeatherInfo.setCity(openWeatherMap.getName());
+		currentWeatherInfo.setWeather(weatherBit.getData().get(0).getWeather().getDescription());
 		currentWeatherInfo.setAvgTemp(calculateAverage(convertToCelsius(openWeatherMap.getMain().getTemp()),
 				weatherBit.getData().get(0).getTemp()));
 		currentWeatherInfo.setAvgApparent(calculateAverage(convertToCelsius(openWeatherMap.getMain().getFeels_like()),
@@ -48,6 +49,7 @@ public class WeatherHelperService {
 				for (WeatherBitTempForecast tempForecast : weatherBit.getData()) {
 					if (isEqualDates(tempForecast.getValid_date(), listWeather.getDt_txt())) {
 						Forecast forecast = new Forecast();
+						forecast.setWeather(tempForecast.getWeatherBitDescription().getDescription());
 						forecast.setDate(tempForecast.getValid_date());
 						forecast.setAvgTemp(calculateAverage(convertToCelsius(listWeather.getMain().getTemp()),
 								tempForecast.getTemp()));
