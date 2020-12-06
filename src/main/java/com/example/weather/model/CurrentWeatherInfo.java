@@ -1,11 +1,14 @@
 package com.example.weather.model;
 
+import java.time.LocalDate;
+
 public class CurrentWeatherInfo {
 
 	String avgTemp;
 	String avgApparent;
 	String city;
 	String weather;
+	LocalDate date;
 
 	public String getAvgTemp() {
 		return avgTemp;
@@ -39,4 +42,11 @@ public class CurrentWeatherInfo {
 		this.weather = weather;
 	}
 
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
 }

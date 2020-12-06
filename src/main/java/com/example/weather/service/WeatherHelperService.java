@@ -29,6 +29,7 @@ public class WeatherHelperService {
 				weatherBit.getData().get(0).getTemp()));
 		currentWeatherInfo.setAvgApparent(calculateAverage(convertToCelsius(openWeatherMap.getMain().getFeels_like()),
 				weatherBit.getData().get(0).getApp_temp()));
+		currentWeatherInfo.setDate(LocalDate.now());
 
 		return currentWeatherInfo;
 	}
@@ -58,7 +59,7 @@ public class WeatherHelperService {
 
 		});
 
-		forecastWeatherInfo.setData(forecasts);
+		forecastWeatherInfo.setForecast(forecasts);
 
 		return forecastWeatherInfo;
 	}

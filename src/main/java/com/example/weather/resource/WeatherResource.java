@@ -16,7 +16,6 @@ import javax.ws.rs.core.Response.StatusType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,28 +24,26 @@ import com.example.weather.model.CurrentWeatherInfo;
 import com.example.weather.model.ForecastWeatherInfo;
 import com.example.weather.service.WeatherService;
 
-
 @RestController
 @Path("/")
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class WeatherResource {
 
-	@Autowired
+	@Inject
 	WeatherService weatherService;
 
 	@Inject
 	ErrorService errorService;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(WeatherResource.class);
 
 	@GET
 	@Path("current-weather")
-	public Response getCurrentWeatherInfo(@QueryParam("city") @Pattern(regexp = "^[a-zA-Z0-9]*$") String city, @QueryParam("zipCode") String zipCode,
-			@HeaderParam("appid") String appKey, @HeaderParam("key") String key) {
-		
-		logger.info("Begin Request", 
-				kv("logIncomingRequest", "current-weather"), kv("city", city)
-				, kv("zipCode", zipCode));
+	public Response getCurrentWeatherInfo(@QueryParam("city") String city, @QueryParam("zipCode") String zipCode,
+			@HeaderParam("openWeatherApiKey") String appKey, @HeaderParam("weatherBitApiKey") String key) {
+
+		logger.info("Begin Request", kv("logIncomingRequest", "current-weather"), kv("city", city),
+				kv("zipCode", zipCode));
 
 		errorService.intializeErrors();
 
@@ -56,19 +53,19 @@ public class WeatherResource {
 			logger.info("Current weather info call is successful");
 			return Response.status(Status.OK).entity(currentWeatherInfo).build();
 		}
-		
+
 		logger.info("Current weather info call failed");
 		return errorResponse(Status.BAD_REQUEST);
 	}
 
 	@GET
 	@Path("forecast-weather")
-	public Response getForecastWeatherInfo(@QueryParam("city") @Pattern(regexp = "^[a-zA-Z0-9]*$") String city, @QueryParam("zipCode") String zipCode,
-			@HeaderParam("appid") String appKey, @HeaderParam("key") String key) {
-		
-		logger.info("Begin Request", 
-				kv("logIncomingRequest", "forecast-weather"), kv("city", city)
-				, kv("zipCode", zipCode));
+	public Response getForecastWeatherInfo(@QueryParam("city") @Pattern(regexp = "^[a-zA-Z0-9]*$") String city,
+			@QueryParam("zipCode") String zipCode, @HeaderParam("openWeatherApiKey") String appKey,
+			@HeaderParam("weatherBitApiKey") String key) {
+
+		logger.info("Begin Request", kv("logIncomingRequest", "forecast-weather"), kv("city", city),
+				kv("zipCode", zipCode));
 
 		errorService.intializeErrors();
 
@@ -79,7 +76,7 @@ public class WeatherResource {
 			logger.info("Forecast weather info call is successful");
 			return Response.status(Status.OK).entity(forecastWeatherInfo).build();
 		}
-		
+
 		logger.info("Forecast weather info call failed");
 		return errorResponse(Status.BAD_REQUEST);
 	}

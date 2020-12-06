@@ -4,15 +4,15 @@ import java.util.List;
 
 public class ForecastWeatherInfo {
 
-	List<Forecast> data;
+	List<Forecast> forecast;
 	String city;
 
-	public List<Forecast> getData() {
-		return data;
+	public List<Forecast> getForecast() {
+		return forecast;
 	}
 
-	public void setData(List<Forecast> data) {
-		this.data = data;
+	public void setForecast(List<Forecast> forecast) {
+		this.forecast = forecast;
 	}
 
 	public String getCity() {
@@ -22,5 +22,4 @@ public class ForecastWeatherInfo {
 	public void setCity(String city) {
 		this.city = city;
 	}
-
 }

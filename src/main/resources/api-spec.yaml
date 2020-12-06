@@ -1,0 +1,209 @@
+swagger: "2.0"
+info:
+  description: "This is the project for getting the current and forecast weather information"
+  version: "1.0.0"
+  title: "Weather API"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "mandovarakrishna@gmail.com"
+host: "localhost:8080"
+basePath: "/api"
+tags:
+- name: "Weather"
+  description: "Weather Information - Current and Forecast"
+  externalDocs:
+    description: "Find out more"
+    url: "http://swagger.io"
+schemes:
+- "https"
+- "http"
+paths:
+  /current-weather:
+    get:
+      tags:
+      - "Weather"
+      summary: "Get Current weather information"
+      description: "Information can obtained by city or zipCode"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "city"
+        in: "query"
+        description: "Weather Information for the city"
+        required: false
+        type: "string"
+      - name: "zipCode"
+        in: "query"
+        description: "Weather Information for the zip-code"
+        required: false
+        type: "string"
+      - name: "openWeatherApiKey"
+        in: "header"
+        description: "Auth Token for accessing OpenWeatherMap API"
+        required: true
+        type: "string"
+      - name: "weatherBitApiKey"
+        in: "header"
+        description: "Auth Token for accessing WeatherBit API"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/CurrentWeatherInfo"
+        "400":
+          description: "Invalid status value"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Error"
+        "404":
+          description: "Invalid status value"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Error"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+        
+  /forecast-weather:
+    get:
+      tags:
+      - "Weather"
+      summary: "Get Forecast weather information"
+      description: "Information can obtained by city or zipCode"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "city"
+        in: "query"
+        description: "Weather Information for the city"
+        required: false
+        type: "string"
+      - name: "zipCode"
+        in: "query"
+        description: "Weather Information for the zip-code"
+        required: false
+        type: "string"
+      - name: "openWeatherApiKey"
+        in: "header"
+        description: "Auth Token for accessing OpenWeatherMap API"
+        required: true
+        type: "string"
+      - name: "weatherBitApiKey"
+        in: "header"
+        description: "Auth Token for accessing WeatherBit API"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ForecastWeatherInfo"
+        "400":
+          description: "Invalid status value"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Error"
+        "404":
+          description: "Invalid status value"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Error"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+
+securityDefinitions:
+  petstore_auth:
+    type: "oauth2"
+    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write:pets: "modify pets in your account"
+      read:pets: "read your pets"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+definitions:
+
+  ForecastWeatherInfo:
+    type: "object"
+    required:
+    - "name"
+    - "photoUrls"
+    properties:
+      forecast:
+        type: "array"
+        items:
+          $ref: "#/definitions/Forecast"
+        description: "Aggregated temperature from different API, valid till two decimal places"
+      city:
+        type: "string"
+        description: "Current weather information of this city"
+        example: "Boston"
+        
+  Forecast:
+    type: "object"
+    properties:
+      date:
+        type: "string"
+        description: "Forcast date"
+        example: "2020-12-03"
+        format: date
+      avgTemp:
+        type: "string"
+        description: "Aggregated temperature from different API, valid till two decimal places"
+        example: "29.07"
+      weather:
+        type: "string"
+        description: "Forecast weather condition of the city on the date"
+        example: "Clear sky"
+      
+  CurrentWeatherInfo:
+    type: "object"
+    properties:
+      avgTemp:
+        type: "string"
+        description: "Aggregated temperature from different API, valid till two decimal places"
+        example: "29.07"
+      avgApparent:
+        type: "string"
+        description: "Aggregated feel-like temprature from different API, valid till two decimal places"
+        example: "27.67"
+      city:
+        type: "string"
+        description: "Current weather information of this city"
+        example: "Boston"
+      weather:
+        type: "string"
+        description: "Current weather condition of the city"
+        example: "Clear sky"
+      date:
+        type: "string"
+        format: "date"
+        description: "Current Date"
+        example: "2020-12-03"
+        
+  Error:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+        description: "Message for the error occured"
+        example: "Error while processing the request"
+      type:
+        type: "string"
+        description: "Type for the error occured"
+        example: "SERVICE_UNAVAILABLE"
+    
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
