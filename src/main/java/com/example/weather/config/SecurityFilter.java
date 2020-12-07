@@ -15,7 +15,11 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
+
+import com.example.weather.error.UnauthorizedException;
+import com.example.weather.error.WeatherError;
 
 /**
  * This filter verify the access permissions for a user based on user name and
@@ -40,7 +44,7 @@ public class SecurityFilter implements ContainerRequestFilter {
 			/** Deny All */
 			if (method.isAnnotationPresent(DenyAll.class)) {
 				requestContext.abortWith(ACCESS_FORBIDDEN);
-				return;
+				throw new UnauthorizedException(new WeatherError("No Request being accepted now.", Status.UNAUTHORIZED.toString()));
 			}
 
 			/** Get Authorization header */
@@ -50,7 +54,7 @@ public class SecurityFilter implements ContainerRequestFilter {
 			/** Filtering based on Auth */
 			if (value == null || value.isEmpty()) {
 				requestContext.abortWith(ACCESS_DENIED);
-				return;
+				throw new UnauthorizedException(new WeatherError("Missing API key.", Status.UNAUTHORIZED.toString()));
 			}
 
 			/** Filtering from LinkedList */
@@ -58,7 +62,7 @@ public class SecurityFilter implements ContainerRequestFilter {
 
 			if (!("YWRtaW46cGFzc3dvcmQ=".equalsIgnoreCase(encodedUserPassword))) {
 				requestContext.abortWith(ACCESS_DENIED);
-				return;
+				throw new UnauthorizedException(new WeatherError("Invalid API key.", Status.UNAUTHORIZED.toString()));
 			}
 
 			/** Verifying RolesAllowed */
@@ -68,7 +72,7 @@ public class SecurityFilter implements ContainerRequestFilter {
 
 				if (!rolesSet.contains("INTERNAL_USER")) {
 					requestContext.abortWith(ACCESS_DENIED);
-					return;
+					throw new UnauthorizedException(new WeatherError("Roles not allowed.", Status.UNAUTHORIZED.toString()));
 				}
 
 			}

@@ -50,6 +50,12 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Error"
+        "401":
+          description: "Invalid status value"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/UnAuthorizedError"
         "404":
           description: "Invalid status value"
           schema:
@@ -89,6 +95,12 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Error"
+        "401":
+          description: "Invalid status value"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/UnAuthorizedError"
         "404":
           description: "Invalid status value"
           schema:
@@ -175,6 +187,18 @@ definitions:
         type: "string"
         description: "Type for the error occured"
         example: "SERVICE_UNAVAILABLE"
+        
+  UnAuthorizedError:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+        description: "Message for the error occured"
+        example: "Invalid API key."
+      type:
+        type: "string"
+        description: "Type for the error occured"
+        example: "Unauthorized"
     
 externalDocs:
   description: "Find out more about Swagger"

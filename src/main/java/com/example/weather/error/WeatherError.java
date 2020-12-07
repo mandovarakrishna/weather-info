@@ -4,6 +4,8 @@ public class WeatherError {
 
 	String message;
 	String type;
+	
+	public WeatherError() {}
 
 	public WeatherError(String message, String type) {
 		super();
