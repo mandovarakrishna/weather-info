@@ -2,6 +2,8 @@ package com.example.weather.service;
 
 import static net.logstash.logback.argument.StructuredArguments.kv;
 
+import java.util.Base64;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
@@ -32,14 +34,17 @@ public class WeatherBitService {
 
 	@Value("${WEATHER_BIT_FORECAST}")
 	String weatherBitForecastUrl;
+	
+	@Value("${WEATHER_BIT_VALUE}")
+	String weatherBitValue;
 
 	private static final Logger logger = LoggerFactory.getLogger(WeatherBitService.class);
 
 	/** GET WeatherBit Current Information */
-	public WeatherBitCurrent getWeatherBitCurrent(String city, String zipCode, String appKey) {
+	public WeatherBitCurrent getWeatherBitCurrent(String city, String zipCode) {
 		WeatherBitCurrent weatherBit = null;
 
-		Response response = restClient.getCall(addQueryParam(city, zipCode, appKey, weatherBitCurrentUrl));
+		Response response = restClient.getCall(addQueryParam(city, zipCode, getAppKey(), weatherBitCurrentUrl));
 
 		if (response != null && Status.OK.getStatusCode() == response.getStatus()) {
 			weatherBit = response.readEntity(WeatherBitCurrent.class);
@@ -53,11 +58,10 @@ public class WeatherBitService {
 	}
 
 	/** GET WeatherBit Forecast Information */
-	public WeatherBitForecast getWeatherBitForecast(String city, String zipCode, String appKey) {
+	public WeatherBitForecast getWeatherBitForecast(String city, String zipCode) {
 		WeatherBitForecast weatherBit = null;
-		Response
-
-		response = restClient.getCall(addQueryParam(city, zipCode, appKey, weatherBitForecastUrl));
+		
+		Response response = restClient.getCall(addQueryParam(city, zipCode, getAppKey(), weatherBitForecastUrl));
 
 		if (response != null && Status.OK.getStatusCode() == response.getStatus()) {
 			weatherBit = response.readEntity(WeatherBitForecast.class);
@@ -82,6 +86,10 @@ public class WeatherBitService {
 		builder.append("&key=" + appKey);
 
 		return builder.toString();
+	}
+	
+	protected String getAppKey() {
+		return new String(Base64.getDecoder().decode(weatherBitValue));
 	}
 
 	protected void parseErrorResponse(Response response) {

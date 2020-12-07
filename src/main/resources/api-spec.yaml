@@ -39,16 +39,6 @@ paths:
         description: "Weather Information for the zip-code"
         required: false
         type: "string"
-      - name: "openWeatherApiKey"
-        in: "query"
-        description: "Auth Token for accessing OpenWeatherMap API"
-        required: true
-        type: "string"
-      - name: "weatherBitApiKey"
-        in: "query"
-        description: "Auth Token for accessing WeatherBit API"
-        required: true
-        type: "string"
       responses:
         "200":
           description: "successful operation"
@@ -67,9 +57,7 @@ paths:
             items:
               $ref: "#/definitions/Error"
       security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
+      - api_key: []
         
   /forecast-weather:
     get:
@@ -90,16 +78,6 @@ paths:
         description: "Weather Information for the zip-code"
         required: false
         type: "string"
-      - name: "openWeatherApiKey"
-        in: "query"
-        description: "Auth Token for accessing OpenWeatherMap API"
-        required: true
-        type: "string"
-      - name: "weatherBitApiKey"
-        in: "query"
-        description: "Auth Token for accessing WeatherBit API"
-        required: true
-        type: "string"
       responses:
         "200":
           description: "successful operation"
@@ -118,22 +96,14 @@ paths:
             items:
               $ref: "#/definitions/Error"
       security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
+      - api_key: []
 
 securityDefinitions:
-  petstore_auth:
-    type: "oauth2"
-    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
-    flow: "implicit"
-    scopes:
-      write:pets: "modify pets in your account"
-      read:pets: "read your pets"
   api_key:
     type: "apiKey"
-    name: "api_key"
-    in: "header"
+    name: "apiKey"
+    in: "query"
+    
 definitions:
 
   ForecastWeatherInfo:

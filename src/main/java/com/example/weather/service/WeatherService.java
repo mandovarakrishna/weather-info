@@ -40,20 +40,20 @@ public class WeatherService {
 	private static final String VALIDATION_FAILURE = "Validation Failure: ";
 	private static final String ERROR_MESSAGE = "Error Message: ";
 
-	public CurrentWeatherInfo getCurrentWeatherInformation(String city, String zipCode, String appKey, String key) {
+	public CurrentWeatherInfo getCurrentWeatherInformation(String city, String zipCode) {
 
 		CurrentWeatherInfo currentWeatherInfo = null;
 		OpenWeatherMapCurrent openWeatherMap = null;
 		WeatherBitCurrent weatherBit = null;
 
-		if (validateInputFields(city, zipCode, appKey, key)) {
+		if (validateInputFields(city, zipCode)) {
 
 			/** Call OpenWeatherMap API */
 			CompletableFuture<OpenWeatherMapCurrent> openWeatherMapResponse = CompletableFuture.supplyAsync(() -> {
 
 				try {
 
-					return openWeatherMapService.getOpenWeatherMapCurrent(city, zipCode, appKey);
+					return openWeatherMapService.getOpenWeatherMapCurrent(city, zipCode);
 				} catch (Exception exception) {
 
 					logger.error("OpenWeatherMap API",
@@ -72,7 +72,7 @@ public class WeatherService {
 
 				try {
 
-					return weatherBitService.getWeatherBitCurrent(city, zipCode, key);
+					return weatherBitService.getWeatherBitCurrent(city, zipCode);
 				} catch (Exception exception) {
 
 					logger.error("WeatherBit API", kv("Exception occured while calling WeatherBit current information",
@@ -102,20 +102,20 @@ public class WeatherService {
 		return currentWeatherInfo;
 	}
 
-	public ForecastWeatherInfo getForecastWeatherInformation(String city, String zipCode, String appKey, String key) {
+	public ForecastWeatherInfo getForecastWeatherInformation(String city, String zipCode) {
 
 		ForecastWeatherInfo forecastWeatherInfo = null;
 		OpenWeatherMapForecast openWeatherMap = null;
 		WeatherBitForecast weatherBit = null;
 
-		if (validateInputFields(city, zipCode, appKey, key)) {
+		if (validateInputFields(city, zipCode)) {
 
 			/** Call OpenWeatherMap API */
 
 			CompletableFuture<OpenWeatherMapForecast> openWeatherMapResponse = CompletableFuture.supplyAsync(() -> {
 
 				try {
-					return openWeatherMapService.getOpenWeatherMapForecast(city, zipCode, appKey);
+					return openWeatherMapService.getOpenWeatherMapForecast(city, zipCode);
 				} catch (Exception exception) {
 
 					logger.error("OpenWeatherMap API",
@@ -133,7 +133,7 @@ public class WeatherService {
 			CompletableFuture<WeatherBitForecast> weatherBitResponse = CompletableFuture.supplyAsync(() -> {
 
 				try {
-					return weatherBitService.getWeatherBitForecast(city, zipCode, key);
+					return weatherBitService.getWeatherBitForecast(city, zipCode);
 				} catch (Exception exception) {
 
 					logger.error("WeatherBit API", kv("Exception occured while calling WeatherBit forecast information",
@@ -165,24 +165,13 @@ public class WeatherService {
 	}
 
 	@SuppressWarnings("deprecation")
-	protected boolean validateInputFields(String city, String zipCode, String appKey, String key) {
+	protected boolean validateInputFields(String city, String zipCode) {
 		boolean isSuccess = true;
 
 		if (StringUtils.isEmpty(city) && StringUtils.isEmpty(zipCode)) {
 
 			logger.info(VALIDATION_FAILURE, kv("City and ZipCode cannot be empty", Status.BAD_REQUEST.toString()));
 			errorService.addError("City and ZipCode cannot be empty", Status.BAD_REQUEST.toString());
-			isSuccess = false;
-		} else if (StringUtils.isEmpty(appKey)) {
-
-			logger.info(VALIDATION_FAILURE,
-					kv("appKey for OpenWeatherMap cannot be empty", Status.BAD_REQUEST.toString()));
-			errorService.addError("appKey for OpenWeatherMap cannot be empty", Status.BAD_REQUEST.toString());
-			isSuccess = false;
-		} else if (StringUtils.isEmpty(key)) {
-
-			logger.info(VALIDATION_FAILURE, kv("appKey for WeatherBit cannot be empty", Status.BAD_REQUEST.toString()));
-			errorService.addError("appKey for WeatherBit cannot be empty", Status.BAD_REQUEST.toString());
 			isSuccess = false;
 		}
 

@@ -2,6 +2,7 @@ package com.example.weather.resource;
 
 import static net.logstash.logback.argument.StructuredArguments.kv;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
@@ -17,7 +18,6 @@ import javax.ws.rs.core.Response.StatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.example.weather.error.ErrorService;
 import com.example.weather.model.CurrentWeatherInfo;
@@ -27,6 +27,7 @@ import com.example.weather.service.WeatherService;
 @Path("/")
 @Produces({ MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_JSON })
+@RolesAllowed("INTERNAL_USER")
 public class WeatherResource {
 
 	@Inject
@@ -38,17 +39,16 @@ public class WeatherResource {
 	private static final Logger logger = LoggerFactory.getLogger(WeatherResource.class);
 
 	@GET
-	@CrossOrigin(origins = "http://localhost:8080/api")
 	@Path("current-weather")
-	public Response getCurrentWeatherInfo(@QueryParam("city") String city, @QueryParam("zipCode") String zipCode,
-			@QueryParam("openWeatherApiKey") String appKey, @QueryParam("weatherBitApiKey") String key) {
+	public Response getCurrentWeatherInfo(@QueryParam("city") @Pattern(regexp = "[a-zA-Z]+") String city,
+			@QueryParam("zipCode") @Pattern(regexp = "[0-9]+") String zipCode) {
 
 		logger.info("Begin Request", kv("logIncomingRequest", "current-weather"), kv("city", city),
 				kv("zipCode", zipCode));
 
 		errorService.intializeErrors();
 
-		CurrentWeatherInfo currentWeatherInfo = weatherService.getCurrentWeatherInformation(city, zipCode, appKey, key);
+		CurrentWeatherInfo currentWeatherInfo = weatherService.getCurrentWeatherInformation(city, zipCode);
 
 		if (CollectionUtils.isEmpty(errorService.getErrors())) {
 			logger.info("Current weather info call is successful");
@@ -61,17 +61,15 @@ public class WeatherResource {
 
 	@GET
 	@Path("forecast-weather")
-	public Response getForecastWeatherInfo(@QueryParam("city") @Pattern(regexp = "^[a-zA-Z0-9]*$") String city,
-			@QueryParam("zipCode") String zipCode, @QueryParam("openWeatherApiKey") String appKey,
-			@QueryParam("weatherBitApiKey") String key) {
+	public Response getForecastWeatherInfo(@QueryParam("city") @Pattern(regexp = "[a-zA-Z]+") String city,
+			@QueryParam("zipCode") @Pattern(regexp = "[0-9]+") String zipCode) {
 
 		logger.info("Begin Request", kv("logIncomingRequest", "forecast-weather"), kv("city", city),
 				kv("zipCode", zipCode));
 
 		errorService.intializeErrors();
 
-		ForecastWeatherInfo forecastWeatherInfo = weatherService.getForecastWeatherInformation(city, zipCode, appKey,
-				key);
+		ForecastWeatherInfo forecastWeatherInfo = weatherService.getForecastWeatherInformation(city, zipCode);
 
 		if (CollectionUtils.isEmpty(errorService.getErrors())) {
 			logger.info("Forecast weather info call is successful");
