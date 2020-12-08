@@ -97,7 +97,7 @@ public class WeatherBitService {
 		if (response != null && Status.NO_CONTENT.getStatusCode() != response.getStatus()) {
 
 			WeatherBitErrorResponse bitErrorResponse = response.readEntity(WeatherBitErrorResponse.class);
-			logger.error("Error occured at OpenWeatherMap API: ",
+			logger.error("Error occured at WeatherBit API: ",
 					kv(bitErrorResponse.getError(), "Error Occurred from WEATHER_BIT_API"));
 			errorService.addError(bitErrorResponse.getError(), "Error Occurred from WEATHER_BIT_API");
 		} else {

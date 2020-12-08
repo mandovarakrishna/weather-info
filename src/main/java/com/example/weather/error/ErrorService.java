@@ -5,7 +5,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.inject.Named;
 
-//@Singleton
 @Named
 public class ErrorService {
 

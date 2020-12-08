@@ -4,6 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class WeatherBitErrorResponse {
 
+	String error;
+
+	public WeatherBitErrorResponse(String error) {
+		super();
+		this.error = error;
+	}
+
 	@JsonProperty("error")
 	public String getError() {
 		return this.error;
@@ -12,7 +19,4 @@ public class WeatherBitErrorResponse {
 	public void setError(String error) {
 		this.error = error;
 	}
-
-	String error;
-
 }
