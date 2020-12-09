@@ -15,7 +15,6 @@ tags:
     description: "Find out more"
     url: "http://swagger.io"
 schemes:
-- "https"
 - "http"
 paths:
   /current-weather:
@@ -128,7 +127,7 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Forecast"
-        description: "Aggregated temperature from different API, valid till two decimal places"
+        description: "Aggregated temperature from different API, valid till two decimal places in Celsius"
       city:
         type: "string"
         description: "Current weather information of this city"
@@ -144,7 +143,7 @@ definitions:
         format: date
       avgTemp:
         type: "string"
-        description: "Aggregated temperature from different API, valid till two decimal places"
+        description: "Aggregated temperature from different API, valid till two decimal places in Celsius"
         example: "29.07"
       weather:
         type: "string"
@@ -156,11 +155,11 @@ definitions:
     properties:
       avgTemp:
         type: "string"
-        description: "Aggregated temperature from different API, valid till two decimal places"
+        description: "Aggregated temperature from different API, valid till two decimal places in Celsius"
         example: "29.07"
       avgApparent:
         type: "string"
-        description: "Aggregated feel-like temprature from different API, valid till two decimal places"
+        description: "Aggregated feel-like temprature from different API, valid till two decimal places in Celsius"
         example: "27.67"
       city:
         type: "string"

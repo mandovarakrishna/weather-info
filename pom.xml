@@ -11,7 +11,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
-	<groupId>com.example</groupId>
+	<groupId>com.webservice</groupId>
 	<artifactId>weather</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>weather</name>
@@ -44,7 +44,7 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-		<!-- Model/Data Oject Dependency -->
+		<!-- Model/Data Object Dependency -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
