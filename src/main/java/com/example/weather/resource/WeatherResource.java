@@ -4,7 +4,6 @@ import static net.logstash.logback.argument.StructuredArguments.kv;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -40,8 +39,7 @@ public class WeatherResource {
 
 	@GET
 	@Path("current-weather")
-	public Response getCurrentWeatherInfo(@QueryParam("city") @Pattern(regexp = "[a-zA-Z]+") String city,
-			@QueryParam("zipCode") @Pattern(regexp = "[0-9]+") String zipCode) {
+	public Response getCurrentWeatherInfo(@QueryParam("city") String city, @QueryParam("zipCode") String zipCode) {
 
 		logger.info("Begin Request", kv("logIncomingRequest", "current-weather"), kv("city", city),
 				kv("zipCode", zipCode));
@@ -61,8 +59,7 @@ public class WeatherResource {
 
 	@GET
 	@Path("forecast-weather")
-	public Response getForecastWeatherInfo(@QueryParam("city") @Pattern(regexp = "[a-zA-Z]+") String city,
-			@QueryParam("zipCode") @Pattern(regexp = "[0-9]+") String zipCode) {
+	public Response getForecastWeatherInfo(@QueryParam("city") String city, @QueryParam("zipCode") String zipCode) {
 
 		logger.info("Begin Request", kv("logIncomingRequest", "forecast-weather"), kv("city", city),
 				kv("zipCode", zipCode));

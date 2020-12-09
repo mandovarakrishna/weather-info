@@ -173,6 +173,18 @@ public class WeatherService {
 			logger.info(VALIDATION_FAILURE, kv("City and ZipCode cannot be empty", Status.BAD_REQUEST.toString()));
 			errorService.addError("City and ZipCode cannot be empty", Status.BAD_REQUEST.toString());
 			isSuccess = false;
+		} 
+		else if (city!= null && !city.matches("[a-zA-Z]+")) {
+
+			logger.info(VALIDATION_FAILURE, kv("Bad Request for city", Status.BAD_REQUEST.toString()));
+			errorService.addError("Bad Request for city: " + city, Status.BAD_REQUEST.toString());
+			isSuccess = false;
+		}
+		else if (zipCode!= null && !zipCode.matches("[0-9]+")) {
+
+			logger.info(VALIDATION_FAILURE, kv("Bad Request for zipCode", Status.BAD_REQUEST.toString()));
+			errorService.addError("Bad Request for zipCode: " + zipCode, Status.BAD_REQUEST.toString());
+			isSuccess = false;
 		}
 
 		return isSuccess;
